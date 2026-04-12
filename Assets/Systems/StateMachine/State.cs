@@ -3,14 +3,17 @@ using UnityEngine;
 
 public abstract class State
 {
-    public readonly StateMachine Machine;
-    public readonly State Parent;
-    public bool Active = false;
-    public State(StateMachine machine, State parent)
+    public StateMachine Machine {  get; private set; }
+    public State Tree { get; private set; }
+    public State Parent { get; private set; }
+    public State(StateMachine machine, State parent, State root)
     {
         Machine = machine;
         Parent = parent;
+        Tree = root;
     }
+
+    public bool Active { get; private set; }
 
     /// <summary>
     /// Use to create child states that are inactive whenever this state is too. Each should take 'Machine' and 'this' as first and second arguments.
@@ -19,22 +22,12 @@ public abstract class State
     public State ActiveChild;
 
     protected virtual State GetDefaultChild() => null;
+
     /// <summary>
     /// Place logic for choosing when to switch states.
     /// </summary>
     /// <returns>null if this state should remain active; otherwise, returns the state to switch into.</returns>
     protected virtual State GetTransition() => null;
-
-    public abstract IStateSequence EnterSequence();
-    public abstract IStateSequence ExitSequence();
-
-    protected virtual void OnStart() { }
-    public void HierarchyStart()
-    {
-        OnStart();
-        ActiveChild = GetDefaultChild();
-        foreach (var child in ChildStates) child.HierarchyStart();
-    }
 
     protected virtual void OnEnter() { }
     /// <summary>
@@ -43,10 +36,12 @@ public abstract class State
     /// </summary>
     public void HierarchyEnter()
     {
+        if (Active) return;
         Parent?.HierarchyEnter();
         if (Parent != null) Parent.ActiveChild = this;
         Active = true;
         OnEnter();
+        ActiveChild ??= GetDefaultChild();
         ActiveChild?.HierarchyEnter();
     }
 
@@ -60,13 +55,17 @@ public abstract class State
         OnExit();
     }
 
-    protected virtual void OnUpdate(float deltaTime) { }
-    public void HierarchyUpdate(float deltaTime)
+    protected virtual void OnUpdate() { }
+    public void HierarchyUpdate()
     {
         State transition = GetTransition();
-        if (transition != null) Machine.SwitchState(this, transition);
-        OnUpdate(deltaTime);
-        ActiveChild?.HierarchyUpdate(deltaTime);
+        if (transition != null)
+        {
+            Machine.SwitchState(this, transition);
+            return;
+        }
+        OnUpdate();
+        ActiveChild?.HierarchyUpdate();
     }
     
     protected virtual void OnFixedUpdate() { }
@@ -87,6 +86,6 @@ public abstract class State
     public void HierarchyCollisionExit2D(Collision2D collision)
     {
         OnCollisionExit2D(collision);
-        ActiveChild?.OnCollisionExit2D(collision);
+        ActiveChild?.HierarchyCollisionExit2D(collision);
     }
 }
