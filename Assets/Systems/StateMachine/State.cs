@@ -6,11 +6,11 @@ public abstract class State
     public StateMachine Machine {  get; private set; }
     public State Tree { get; private set; }
     public State Parent { get; private set; }
-    public State(StateMachine machine, State parent, State root)
+    public State(StateMachine machine, State parent, State tree)
     {
         Machine = machine;
         Parent = parent;
-        Tree = root;
+        Tree = tree;
     }
 
     public bool Active { get; private set; }
