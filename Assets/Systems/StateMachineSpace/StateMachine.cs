@@ -17,6 +17,7 @@ namespace Assets.Systems.StateMachineSpace
         // enum statekeys: default = 0
         // InitializeStates(): RootStates.Add(statekeys.default, koistate.idle)
         // and defaultstate should always default to rootstates[statekeys.default] or rootstates[0] which is why some standardized method is required
+        // this comment does nothing and im just testing out the discord webhook
         protected Dictionary<int, State> RootStates;
         protected abstract void InitializeStates();
         public abstract State DefaultState { get; protected set; }
