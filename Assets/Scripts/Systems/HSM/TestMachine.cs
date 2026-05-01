@@ -1,4 +1,4 @@
-﻿namespace Assets.Systems.StateMachineSpace
+﻿namespace Assets.Scripts.Systems.HSM
 {
 	public class TestMachine : StateMachine
 	{

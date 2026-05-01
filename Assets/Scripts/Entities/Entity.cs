@@ -1,6 +1,7 @@
+using Assets.Scripts.Systems.Damage;
 using UnityEngine;
 
-namespace Assets.EntitySpace
+namespace Assets.Scripts.Entities
 {
     public abstract class Entity : MonoBehaviour
     {
@@ -9,13 +10,13 @@ namespace Assets.EntitySpace
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-
+            Health = MaxHealth;
         }
 
-        // Update is called once per frame
-        void Update()
+        // Largely placeholder
+        private void TakeDamage(RefinedDamage damage)
         {
-
+            Health -= damage.Damage;
         }
     }
 }

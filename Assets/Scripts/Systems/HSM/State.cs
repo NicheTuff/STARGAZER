@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Systems.StateMachineSpace
+namespace Assets.Scripts.Systems.HSM
 {
     public abstract class State
     {
