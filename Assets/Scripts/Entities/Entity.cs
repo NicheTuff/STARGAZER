@@ -8,7 +8,7 @@ namespace Assets.Scripts.Entities
         public abstract int MaxHealth { get; protected set; }
         public int Health { get; protected set; }
         // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        private void Start()
         {
             Health = MaxHealth;
         }

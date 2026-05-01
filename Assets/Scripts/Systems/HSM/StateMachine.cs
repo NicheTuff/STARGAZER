@@ -30,10 +30,10 @@ namespace Assets.Scripts.Systems.HSM
             ActiveState.HierarchyEnter();
         }
 
-        void Update() => ActiveState?.HierarchyUpdate();
-        void FixedUpdate() => ActiveState?.HierarchyFixedUpdate();
-        void OnCollisionEnter2D(Collision2D collision) => ActiveState?.HierarchyCollisionEnter2D(collision);
-        void OnCollisionExit2D(Collision2D collision) => ActiveState?.HierarchyCollisionExit2D(collision);
+        private void Update() => ActiveState?.HierarchyUpdate();
+        private void FixedUpdate() => ActiveState?.HierarchyFixedUpdate();
+        private void OnCollisionEnter2D(Collision2D collision) => ActiveState?.HierarchyCollisionEnter2D(collision);
+        private void OnCollisionExit2D(Collision2D collision) => ActiveState?.HierarchyCollisionExit2D(collision);
 
         public void SwitchState(State current, State next)
         {
