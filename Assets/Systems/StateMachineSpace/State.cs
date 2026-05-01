@@ -39,7 +39,7 @@ namespace Assets.Systems.StateMachineSpace
         /// </summary>
         protected virtual void OnEnter() { }
         /// <summary>
-        /// Entering a state will activate each of its parent states, then itself, then each child state from top to bottom.<br/>
+        /// Entering a state will activate each of its parent states, then itself.
         /// A "leaf" cannot be activated without activating the entire branch.
         /// </summary>
         public void HierarchyEnter()
@@ -52,17 +52,12 @@ namespace Assets.Systems.StateMachineSpace
             }
             Active = true;
             OnEnter();
-            if (GetDefaultChild() != null)
-            {
-                ActiveChild = GetDefaultChild();
-                ActiveChild.OnEnter();
-            }
         }
 
         protected virtual void OnExit() { }
-        public void HierarchyExit(bool remainActive = false)
+        public void HierarchyExit(bool remainActive)
         {
-            ActiveChild?.HierarchyExit();
+            ActiveChild?.HierarchyExit(false);
             ActiveChild = null;
             if (remainActive == true) return;
             Active = false;

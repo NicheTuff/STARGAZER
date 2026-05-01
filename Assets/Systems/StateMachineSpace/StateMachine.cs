@@ -42,7 +42,7 @@ namespace Assets.Systems.StateMachineSpace
             // If the target state is on an entirely new tree, fully exit out of the current tree before swapping ActiveTree to the new tree and entering down to the target state.
             if (current.Root != next.Root)
             {
-                ActiveState.Root.HierarchyExit();
+                ActiveState.Root.HierarchyExit(false);
                 ActiveState = next;
                 next.HierarchyEnter();
                 return;
