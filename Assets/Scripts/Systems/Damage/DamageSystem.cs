@@ -1,56 +1,149 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Systems.Damage
 {
     // TODO:
     // This whole system should be distributed across many files
-    // Obviously increase functionality
 
-    // Placeholder types
     public enum DamageType
     {
         Physical,
         Spirit
     }
 
-    public struct DamageModifier
+    public class StatModifier
     {
         public int Additive;
         public float Percent;
-        public float Multiplier;
+        public float Multiplier = 1f;
     }
 
-    // Contains info about an entities damage stats
-    // Should be compositionally related with entities that deal damage 
-    public class DamageProfile
+    /// <summary>
+    /// Modifiers applied to an entity's outgoing attack during the damage refinement process.
+    /// Attack modifiers are applied in ASCENDING degree (additive first, then percent, then multiplicative).
+    /// </summary>
+    public class DamageStats
     {
-        private Dictionary<DamageType, DamageModifier> modifiers;
+        private Dictionary<DamageType, StatModifier> typeModifiers = new();
 
-        public DamageModifier GetModifiers(DamageType damageType)
+        public StatModifier GetTypeModifiers(DamageType damageType)
         {
-            if (!modifiers.TryGetValue(damageType, out var modifier))
+            if (!typeModifiers.TryGetValue(damageType, out var modifier))
             {
-                modifier = new DamageModifier();
-                modifiers[damageType] = modifier;
+                modifier = new StatModifier();
+                typeModifiers[damageType] = modifier;
             }
             return modifier;
         }
+        public StatModifier PierceModifiers = new StatModifier();
+
+        public StatModifier CritModifiers = new StatModifier { Percent = 1f };
     }
 
-    // Uncalculated damage instance
-    public class RawDamage
+    public class DefenseStats
     {
-        public DamageType DamageType;
-        public int Damage;
+        public int MaxHealth;
+        public int Health;
+        public DefenseStats(int maxHealth, int health)
+        {
+            MaxHealth = maxHealth;
+            Health = health;
+        }
+
+        private Dictionary<DamageType, int> typeArmors = new();
+        public int GetTypeArmor(DamageType damageType)
+        {
+            if (!typeArmors.TryGetValue(damageType, out var armor))
+            {
+                armor = 0;
+                typeArmors[damageType] = armor;
+            }
+            return armor;
+        }
+    }
+
+    public readonly struct DamageInstance
+    {
+        public readonly DamageType DamageType;
+        public readonly int Damage;
+        public readonly int Pierce;
+        public readonly bool QualifiesCrit;
+        public DamageInstance(DamageType damageType, int damage, int pierce, bool qualifiesCrit)
+        {
+            DamageType = damageType;
+            Damage = damage;
+            Pierce = pierce;
+            QualifiesCrit = qualifiesCrit;
+        }
+    }
+
+    public interface IDamageDealer
+    {
+        public DamageInstance OnCrit(DamageInstance refinedPreCrit, DamageStats damageStats)
+        {
+            float critDamage = refinedPreCrit.Damage * (1 + damageStats.CritModifiers.Percent);
+            return new DamageInstance(refinedPreCrit.DamageType, (int)critDamage, refinedPreCrit.Pierce, true);
+        }
+        public DamageInstance[] RefineDamage(DamageInstance rawDamage, DamageStats damageStats)
+        {
+            float damage = rawDamage.Damage;
+            damage += damageStats.GetTypeModifiers(rawDamage.DamageType).Additive;
+            damage *=  1 + damageStats.GetTypeModifiers(rawDamage.DamageType).Percent;
+            damage *= damageStats.GetTypeModifiers(rawDamage.DamageType).Multiplier;
+
+            float pierce = rawDamage.Pierce;
+            pierce += damageStats.PierceModifiers.Additive;
+            pierce *= 1 + damageStats.PierceModifiers.Percent;
+            pierce *= damageStats.PierceModifiers.Multiplier;
+
+            var preCrit = new DamageInstance(rawDamage.DamageType, (int)damage, (int)pierce, rawDamage.QualifiesCrit);
+
+            var postCrit = OnCrit(preCrit, damageStats);
+
+            return new DamageInstance[] { preCrit, postCrit };
+        }
+    }
+
+    public interface IDamageable
+    {
+        public bool CritRequirement() => true;
+        public HitData TakeDamage(DamageInstance[] incomingAttack, DefenseStats defenseStats)
+        {
+            bool critLands = incomingAttack[0].QualifiesCrit && CritRequirement();
+            var appliedAttack = critLands ? incomingAttack[1] : incomingAttack[0];
+
+            int effectiveArmor = defenseStats.GetTypeArmor(appliedAttack.DamageType) - appliedAttack.Pierce;
+            int damageReceived = appliedAttack.Damage - effectiveArmor;
+
+            defenseStats.Health = Math.Clamp(defenseStats.Health - damageReceived, 0, defenseStats.MaxHealth);
+
+            if (critLands)
+            {
+                OnReceiveCrit();
+            }
+            if (defenseStats.Health <= 0)
+            {
+                OnDeath();
+            }
+
+            return new HitData(this, damageReceived, critLands);
+        }
+        public void OnReceiveCrit() { }
+        public void OnDeath();
     }
 
     // Final damage returned by a damage calc operation
-    public class RefinedDamage
+    public readonly struct HitData
     {
-        public int Damage {get; private set;}
-        public bool IsCrit { get; private set;}
+        public readonly IDamageable Victim;
+        public readonly int DamageTaken;
+        public readonly bool WasCrit;
+        public HitData(IDamageable victim, int damageTaken, bool wasCrit)
+        {
+            Victim = victim;
+            DamageTaken = damageTaken;
+            WasCrit = wasCrit;
+        }
     }
-
-    // doesnt do anything yet llol
-    public class DamageCalculator { }
 }
