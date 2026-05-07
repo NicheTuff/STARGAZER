@@ -17,6 +17,13 @@ namespace Assets.Scripts.Systems.Damage
         public int Additive;
         public float Percent;
         public float Multiplier = 1f;
+        public float Apply(float value)
+        {
+            value += Additive;
+            value *= 1 + Percent;
+            value *= Multiplier;
+            return value;
+        }
     }
 
     /// <summary>
@@ -87,15 +94,9 @@ namespace Assets.Scripts.Systems.Damage
         }
         public DamageInstance[] RefineDamage(DamageInstance rawDamage, DamageStats damageStats)
         {
-            float damage = rawDamage.Damage;
-            damage += damageStats.GetTypeModifiers(rawDamage.DamageType).Additive;
-            damage *=  1 + damageStats.GetTypeModifiers(rawDamage.DamageType).Percent;
-            damage *= damageStats.GetTypeModifiers(rawDamage.DamageType).Multiplier;
+            float damage = damageStats.GetTypeModifiers(rawDamage.DamageType).Apply(rawDamage.Damage);
 
-            float pierce = rawDamage.Pierce;
-            pierce += damageStats.PierceModifiers.Additive;
-            pierce *= 1 + damageStats.PierceModifiers.Percent;
-            pierce *= damageStats.PierceModifiers.Multiplier;
+            float pierce = damageStats.PierceModifiers.Apply(rawDamage.Pierce);
 
             var preCrit = new DamageInstance(rawDamage.DamageType, (int)damage, (int)pierce, rawDamage.QualifiesCrit);
 
