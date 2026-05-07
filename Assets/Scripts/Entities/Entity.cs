@@ -1,4 +1,5 @@
 using Assets.Scripts.Systems.Damage;
+using Assets.Scripts.Systems.Stats.StatProfiles;
 using UnityEngine;
 
 namespace Assets.Scripts.Entities

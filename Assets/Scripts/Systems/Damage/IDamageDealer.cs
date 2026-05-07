@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Systems.Stats;
+﻿using Assets.Scripts.Systems.Stats.StatProfiles;
 
 namespace Assets.Scripts.Systems.Damage
 {
