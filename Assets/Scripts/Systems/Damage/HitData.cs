@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Systems.Damage
+﻿namespace STARGAZER.Systems.Damage
 {
     // Final damage returned by a damage calc operation
     public readonly struct HitData

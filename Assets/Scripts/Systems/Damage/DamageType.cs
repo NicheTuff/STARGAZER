@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Systems.Damage
+﻿namespace STARGAZER.Systems.Damage
 {
     public enum DamageType
     {

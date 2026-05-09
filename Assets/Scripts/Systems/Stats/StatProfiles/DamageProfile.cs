@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Systems.Damage;
+﻿using STARGAZER.Systems.Damage;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Systems.Stats.StatProfiles
+namespace STARGAZER.Systems.Stats.StatProfiles
 {
     public class DamageProfile
     {

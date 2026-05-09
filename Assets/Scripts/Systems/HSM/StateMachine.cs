@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Systems.HSM
+namespace STARGAZER.Systems.HSM
 {
     // State Machine implementation heavily inspired by this bloke on YouTube: https://youtu.be/c-XoTg6Fba4?si=9mmc9SnlWlmyl2bG
 

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Systems.HSM
+﻿namespace STARGAZER.Systems.HSM
 {
 	public class TestMachine : StateMachine
 	{

@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Systems.Stats
+namespace STARGAZER.Systems.Stats
 {
     public class StatModifier
     {

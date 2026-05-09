@@ -1,6 +1,6 @@
-﻿using Assets.Scripts.Systems.Stats.StatProfiles;
+﻿using STARGAZER.Systems.Stats.StatProfiles;
 
-namespace Assets.Scripts.Systems.Damage
+namespace STARGAZER.Systems.Damage
 {
     public interface IDamageDealer
     {

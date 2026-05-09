@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Systems.HSM
+namespace STARGAZER.Systems.HSM
 {
     public abstract class State
     {
