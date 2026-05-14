@@ -18,9 +18,9 @@ namespace STARGAZER.Entities
 
         public virtual DamageResolver DamageResolver { get; protected set; } = DamageResolver.Instance;
 
-        public bool AllowsCrit(DamageInstance incomingAttack) => true;
+        public virtual bool AllowsCrit(DamageInstance incomingAttack) => true;
 
-        public bool ForceCrit(DamageInstance incomingAttack) => false;
+        public virtual bool ForceCrit(DamageInstance incomingAttack) => false;
 
         public virtual HitData TakeHit(DamageInstance incomingAttack)
         {
