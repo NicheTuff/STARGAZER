@@ -5,11 +5,6 @@ namespace STARGAZER.Systems.Stats.StatProfiles
 {
     public class DamageProfile
     {
-        public DamageCalculator Calculator { get; protected set; } = DamageCalculator.Instance;
-        public DamageStats Stats = new DamageStats();
-    }
-    public class DamageStats
-    {
         private Dictionary<DamageType, StatModifier> typeModifiers = new();
         public StatModifier GetTypeModifiers(DamageType damageType)
         {

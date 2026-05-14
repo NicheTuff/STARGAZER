@@ -4,7 +4,8 @@ namespace STARGAZER.Systems.Damage
 {
     public interface IDamageDealer
     {
-        DamageProfile DamageProfile { get; }
+        public DamageProfile DamageProfile { get; }
+        public DamageCalculator DamageCalculator { get; }
         public void OnHit(IDamageable victim);
         public void PostHit(HitData hitData);
     }

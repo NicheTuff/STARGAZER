@@ -6,11 +6,6 @@ namespace STARGAZER.Systems.Stats.StatProfiles
 {
     public class DefenseProfile
     {
-        public DamageResolver Resolver = DamageResolver.Instance;
-        public DefenseStats Stats = new DefenseStats();
-    }
-    public class DefenseStats
-    {
         public Dictionary<DamageType, StatModifier> armorModifiers = new();
         private StatModifier GetArmorModifiers(DamageType damageType)
         {

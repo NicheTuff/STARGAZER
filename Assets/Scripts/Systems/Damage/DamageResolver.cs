@@ -5,15 +5,15 @@ namespace STARGAZER.Systems.Damage
 {
 	public class DamageResolver
 	{
-		private static bool EvaluateCrit(DamageInstance attack, IDamageable target) => attack.QualifiesCrit && target.AllowsCrit(attack);
+		protected static bool EvaluateCrit(DamageInstance attack, IDamageable target) => (attack.QualifiesCrit && target.AllowsCrit(attack)) || attack.ForceCrit || target.ForceCrit(attack);
 		public CritResult ResolveCrit(DamageInstance attack, IDamageable target)
 		{
 			bool critLands = EvaluateCrit(attack, target);
 			if (critLands)
-				attack = attack.Source.DamageProfile.Calculator.ApplyCrit(attack);
+				attack = attack.Source.DamageCalculator.ApplyCrit(attack);
 			return new CritResult(critLands, attack);
 		}
-		public int ApplyArmor(DamageInstance attack, DefenseStats stats)
+		public int ApplyArmor(DamageInstance attack, DefenseProfile stats)
 		{
             int effectiveArmor = stats.GetTypeArmor(attack.DamageType) - attack.Pierce;
             return Math.Max(attack.Damage - effectiveArmor, 0);

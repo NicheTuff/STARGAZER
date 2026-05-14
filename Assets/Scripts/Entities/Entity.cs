@@ -16,16 +16,19 @@ namespace STARGAZER.Entities
 
         public virtual DefenseProfile DefenseProfile { get; protected set; } = new DefenseProfile();
 
+        public virtual DamageResolver DamageResolver { get; protected set; } = DamageResolver.Instance;
+
         public bool AllowsCrit(DamageInstance incomingAttack) => true;
+
+        public bool ForceCrit(DamageInstance incomingAttack) => false;
 
         public virtual HitData TakeHit(DamageInstance incomingAttack)
         {
-            var profile = incomingAttack.Source.DamageProfile;
-            var critResult = DefenseProfile.Resolver.ResolveCrit(incomingAttack, this);
+            var critResult = DamageResolver.ResolveCrit(incomingAttack, this);
 
             // Effective armor can become negative when faced with enough pierce and this will increase the damage received.
             // This behavior is intended.
-            int damageReceived = DefenseProfile.Resolver.ApplyArmor(critResult.Attack, DefenseProfile.Stats);
+            int damageReceived = DamageResolver.ApplyArmor(critResult.Attack, DefenseProfile);
 
             HealthComponent.Hurt(damageReceived);
 
